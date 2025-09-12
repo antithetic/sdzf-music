@@ -6,12 +6,14 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@sanity/eslint-config-studio": "^5.0.2",
     "@sanity/rich-date-input": "^3.0.6",
     "@sanity/vision": "^4.8.1",
+    "lucide-react": "^0.544.0",
     "sanity": "^4.8.1",
     "sanity-plugin-iconify": "^2.0.3",
     "sanity-plugin-image-asset-picker": "^1.0.1",
