@@ -7,7 +7,7 @@ export default defineType({
   fields: [
     defineField({
       name: 'name',
-      title: 'Name',
+      title: 'Artist Name',
       type: 'string',
     }),
     defineField({
@@ -15,6 +15,12 @@ export default defineType({
       title: 'Performance Description',
       type: 'text',
       rows: 1,
+    }),
+    defineField({
+      name: 'bio',
+      title: 'Artist Bio',
+      type: 'text',
+      description: 'A short bio of the artist, for promotional purposes.'
     }),
     defineField({
       name: 'type',
@@ -47,10 +53,20 @@ export default defineType({
       options: {
         source: 'name',
         maxLength: 96,
+        isUnique: (value, context) => context.defaultIsUnique(value, context),
       },
       validation: (rule) => rule
       .required()
       .error(`Required to generate a page on the website`),
+    }),
+    defineField({
+      name: 'icon',
+      title: 'Icon',
+      type: 'icon',
+      options: {
+        collections: ['lucide', 'lucide-lab'],
+        showName: true,
+      }
     })
   ],
 })

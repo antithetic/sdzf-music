@@ -2,6 +2,8 @@ import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {tags} from 'sanity-plugin-tags-v4'
+import { iconify } from 'sanity-plugin-iconify';
+
 
 import {schemaTypes} from './schemaTypes'
 
@@ -12,7 +14,7 @@ export default defineConfig({
   projectId: '1zmxr8qy',
   dataset: 'production',
 
-  plugins: [structureTool(), visionTool(), tags()],
+  plugins: [structureTool(), visionTool(), tags(), iconify()],
 
   schema: {
     types: schemaTypes,
