@@ -1,6 +1,6 @@
-import {defineType, defineField} from 'sanity'
+import {defineField, defineType} from 'sanity'
 
-export default defineType({
+export const artistType = defineType({
   name: 'artist',
   title: 'Artist',
   type: 'document',
@@ -20,7 +20,7 @@ export default defineType({
       name: 'bio',
       title: 'Artist Bio',
       type: 'text',
-      description: 'A short bio of the artist, for promotional purposes.'
+      description: 'A short bio of the artist, for promotional purposes.',
     }),
     defineField({
       name: 'type',
@@ -33,9 +33,9 @@ export default defineType({
           {title: 'Band', value: 'band'},
           {title: 'DJ', value: 'dj'},
           {title: 'Hybrid', value: 'hybrid'},
-          {title: 'Other', value: 'other'}
-        ]
-      }
+          {title: 'Other', value: 'other'},
+        ],
+      },
     }),
     defineField({
       name: 'genreTags',
@@ -44,7 +44,7 @@ export default defineType({
       options: {
         includeFromRelated: 'genreTags',
         allowCreate: true,
-      }
+      },
     }),
     defineField({
       name: 'slug',
@@ -55,9 +55,8 @@ export default defineType({
         maxLength: 96,
         isUnique: (value, context) => context.defaultIsUnique(value, context),
       },
-      validation: (rule) => rule
-      .required()
-      .error(`Required to generate a page on the website`),
+      validation: (rule) =>
+        rule.required().error(`Required to generate a page on the website`),
     }),
     defineField({
       name: 'icon',
@@ -66,7 +65,7 @@ export default defineType({
       options: {
         collections: ['lucide', 'lucide-lab'],
         showName: true,
-      }
-    })
+      },
+    }),
   ],
 })
