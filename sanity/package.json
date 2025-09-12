@@ -1,0 +1,12 @@
+{
+  "name": "@repo/sanity",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@sanity/vision": "^4.8.1",
+    "sanity": "^4.8.1",
+    "sanity-plugin-tags-v4": "^1.0.2"
+  }
+}
