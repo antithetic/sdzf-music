@@ -39,7 +39,13 @@ export const venueType = defineType({
       name: 'zipcode',
       type: 'string',
       description: 'The zipcode of the venue',
-      validation: (Rule) => Rule.required().error('A zipcode is required'),
+      validation: (Rule) =>
+        Rule.required()
+          .error('A zipcode is required')
+          .custom((z) => {
+            if (!z) return true
+            return /^\d{5}(-\d{4})?$/.test(z) || 'Enter a valid ZIP code'
+          }),
     }),
     defineField({
       name: 'slug',
@@ -49,6 +55,7 @@ export const venueType = defineType({
       options: {
         source: (doc) => `${doc.name}-${doc.city}`,
         maxLength: 96,
+        isUnique: (value, context) => context.defaultIsUnique(value, context),
       },
       validation: (Rule) =>
         Rule.required()
@@ -225,7 +232,7 @@ export const venueType = defineType({
         Rule.max(5).error('You can upload a maximum of 5 images'),
     }),
     defineField({
-      name: 'contacts',
+      name: 'contact',
       title: 'Venue Contacts',
       type: 'array',
       description:

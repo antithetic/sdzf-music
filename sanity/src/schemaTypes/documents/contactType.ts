@@ -169,7 +169,7 @@ export const contactType = defineType({
       name: 'email',
       title: 'Email Addresses',
       type: 'array',
-      description: 'Add one or more email addresses for this contact',
+      description: 'Add one or more email addresses for this artist',
       of: [
         {
           type: 'object',
@@ -241,7 +241,7 @@ export const contactType = defineType({
           },
         },
       ],
-      // validation: (Rule) => Rule.required().min(1).error('A // validation: (Rule) =>
+      // validation: (Rule) =>
       //   Rule.required().min(1).errot least one email address is required'),
     }),
   ],
@@ -249,6 +249,9 @@ export const contactType = defineType({
     select: {
       title: 'name',
       subtitle: 'position',
+    },
+    prepare(selection) {
+      return {...selection, media: Contact}
     },
   },
 })

@@ -1,26 +1,11 @@
-import {
-  CircleSmall,
-  Link,
-  Mail,
-  Palette,
-  PhoneOutgoing,
-  Users,
-} from 'lucide-react'
+import {CircleSmall, Link, Palette, Users} from 'lucide-react'
 import {defineField, defineType} from 'sanity'
-
-const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
 type PronounType = 'he/him' | 'she/her' | 'they/them' | 'other'
 
 interface PronounObject {
   type: PronounType
   customPronouns?: string
-}
-
-interface EmailObject {
-  type: 'work' | 'personal' | 'other'
-  address: string
-  customType?: string
 }
 
 export const artistType = defineType({
@@ -239,36 +224,37 @@ export const artistType = defineType({
               description: 'Full URL to the social media profile or website',
               validation: (Rule) =>
                 Rule.required()
-                  .error('A valid URL is required')
+                  .uri({scheme: ['http', 'https']})
                   .custom((value, context) => {
-                    if (!value || typeof value !== 'string') return true
-                    const parent = context.parent as {
-                      platform: string
-                    } | null
-                    if (!parent) return true
-
+                    if (!value) return true
+                    const parent = (context.parent ?? {}) as {platform?: string}
                     const platform = parent.platform
-                    const urlPatterns = {
-                      website: /^https?:\/\/.+/,
-                      instagram: /^https?:\/\/(www\.)?instagram\.com\/.+/,
-                      twitter: /^https?:\/\/(www\.)?twitter\.com\/.+/,
-                      tiktok: /^https?:\/\/(www\.)?tiktok\.com\/.+/,
-                      facebook: /^https?:\/\/(www\.)?facebook\.com\/.+/,
-                      youtube: /^https?:\/\/(www\.)?youtube\.com\/.+/,
-                      other: /^https?:\/\/.+/,
+                    try {
+                      const {hostname} = new URL(value as string)
+                      const host = hostname.replace(/^www\./, '')
+                      const okByPlatform: Record<
+                        string,
+                        (h: string) => boolean
+                      > = {
+                        website: () => true,
+                        instagram: (h) => h === 'instagram.com',
+                        twitter: (h) => h === 'twitter.com' || h === 'x.com',
+                        tiktok: (h) => h === 'tiktok.com',
+                        facebook: (h) => h === 'facebook.com',
+                        youtube: (h) => h === 'youtube.com' || h === 'youtu.be',
+                        other: () => true,
+                      }
+                      if (
+                        platform &&
+                        platform !== 'other' &&
+                        !okByPlatform[platform]?.(host)
+                      ) {
+                        return `Please enter a valid ${platform} URL`
+                      }
+                      return true
+                    } catch {
+                      return 'Enter a valid absolute URL (including https://)'
                     }
-
-                    if (
-                      platform &&
-                      platform !== 'other' &&
-                      !urlPatterns[platform as keyof typeof urlPatterns].test(
-                        value,
-                      )
-                    ) {
-                      return `Please enter a valid ${platform} URL`
-                    }
-
-                    return true
                   }),
             },
             {
@@ -332,147 +318,14 @@ export const artistType = defineType({
       ],
     }),
     defineField({
-      name: 'phoneNumbers',
-      title: 'Phone Numbers',
+      name: 'contact',
+      title: 'Artist Contact',
       type: 'array',
-      description: 'Add one or more phone numbers for this contact',
-      group: 'details',
+      description: 'Artist Contact Information',
       of: [
         {
-          type: 'object',
-          fields: [
-            {
-              name: 'type',
-              title: 'Type',
-              type: 'string',
-              options: {
-                list: [
-                  {title: 'Work', value: 'work'},
-                  {title: 'Mobile', value: 'mobile'},
-                  {title: 'Home', value: 'home'},
-                  {title: 'Other', value: 'other'},
-                ],
-                layout: 'dropdown',
-              },
-              validation: (Rule) =>
-                Rule.required().error('Please select a phone type'),
-            },
-            {
-              name: 'number',
-              title: 'Phone Number',
-              type: 'string',
-              validation: (Rule) =>
-                Rule.required().error('Phone number is required'),
-            },
-            {
-              name: 'customType',
-              title: 'Custom Type',
-              type: 'string',
-              description: 'Specify the type if you selected "Other"',
-              hidden: ({parent}) => parent?.type !== 'other',
-              validation: (Rule) =>
-                Rule.custom((value, context) => {
-                  const parent = context.parent as {type?: string}
-                  if (parent?.type === 'other' && !value) {
-                    return 'Please specify the phone type'
-                  }
-                  return true
-                }),
-            },
-          ],
-          preview: {
-            select: {
-              type: 'type',
-              number: 'number',
-              customType: 'customType',
-            },
-            prepare({type, number, customType}) {
-              const title = type === 'other' ? customType : type
-              return {
-                title: title
-                  ? title.charAt(0).toUpperCase() + title.slice(1)
-                  : 'Untitled',
-                subtitle: number,
-                media: PhoneOutgoing,
-              }
-            },
-          },
-        },
-      ],
-    }),
-    defineField({
-      name: 'emails',
-      title: 'Email Addresses',
-      type: 'array',
-      description: 'Add one or more email addresses for this contact',
-      group: 'details',
-      of: [
-        {
-          type: 'object',
-          fields: [
-            {
-              name: 'type',
-              title: 'Type',
-              type: 'string',
-              options: {
-                list: [
-                  {title: 'Work', value: 'work'},
-                  {title: 'Personal', value: 'personal'},
-                  {title: 'Other', value: 'other'},
-                ],
-                layout: 'dropdown',
-              },
-              validation: (Rule) =>
-                Rule.required().error('Please select an email type'),
-            },
-            {
-              name: 'address',
-              title: 'Email Address',
-              type: 'email',
-              validation: (Rule) =>
-                Rule.required()
-                  .error('Email address is required')
-                  .custom((email) => {
-                    if (!email) return true
-                    return (
-                      EMAIL_REGEX.test(email as string) ||
-                      'Must be a valid email address'
-                    )
-                  }),
-            },
-            {
-              name: 'customType',
-              title: 'Custom Type',
-              type: 'string',
-              description: 'Specify the type if you selected "Other"',
-              hidden: ({parent}) => parent?.type !== 'other',
-              validation: (Rule) =>
-                Rule.custom((value, context) => {
-                  const parent = context.parent as EmailObject
-                  if (parent?.type === 'other' && !value) {
-                    return 'Please specify the email type'
-                  }
-                  return true
-                }),
-            },
-          ],
-          preview: {
-            select: {
-              type: 'type',
-              address: 'address',
-              customType: 'customType',
-            },
-            prepare({type, address, customType}) {
-              const title = type === 'other' ? customType : type
-              return {
-                title: title
-                  ? title.charAt(0).toUpperCase() + title.slice(1)
-                  : 'Untitled',
-                subtitle: address,
-                media: Mail,
-              }
-            },
-          },
+          type: 'reference',
+          to: [{type: 'contact'}],
         },
       ],
     }),

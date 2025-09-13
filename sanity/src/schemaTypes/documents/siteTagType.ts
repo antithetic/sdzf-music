@@ -28,4 +28,9 @@ export const siteTagType = defineType({
           .error('Slug is required to generate a page on the website'),
     }),
   ],
+  preview: {
+    select: {
+      title: 'name',
+    },
+  },
 })

@@ -31,7 +31,7 @@ export default defineConfig({
     richDate(),
     singletonTools(),
     tags(),
-    uniquePlugin,
+    uniquePlugin(),
   ],
 
   schema: {

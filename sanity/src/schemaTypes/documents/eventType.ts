@@ -40,7 +40,7 @@ export const eventType = defineType({
           {title: 'DJs', value: 'djs'},
           {title: 'Literature', value: 'literature'},
           {title: 'Music', value: 'music'},
-          {title: 'Performance', value: 'Performance'},
+          {title: 'Performance', value: 'performance'},
           {title: 'Pop-Up', value: 'pop-up'},
           {title: 'Workshop', value: 'workshop'},
           'other',
@@ -55,10 +55,15 @@ export const eventType = defineType({
       type: 'string',
       group: 'details',
       description: 'Please specify the type of event',
-      hidden: ({document}) => document?.eventType !== 'other',
+      hidden: ({document}) =>
+        !Array.isArray(document?.eventType) ||
+        !document.eventType.includes('other'),
       validation: (Rule) =>
         Rule.custom((field, context) => {
-          if (context.document?.eventType === 'other' && !field) {
+          const isOther =
+            Array.isArray(context.document?.eventType) &&
+            context.document.eventType.includes('other')
+          if (isOther && !field) {
             return 'Please specify the event type'
           }
           return true
@@ -231,6 +236,10 @@ export const eventType = defineType({
       type: 'url',
       description: 'Add the link to the tickets for this event, if any',
       group: 'details',
+      validation: (Rule) =>
+        Rule.uri({
+          scheme: ['http', 'https'],
+        }).error('Please enter a valid URL'),
     }),
     defineField({
       name: 'isFree',
@@ -253,7 +262,10 @@ export const eventType = defineType({
           if (!context.document?.isFree && !value) {
             return 'Cover charge is required for paid events'
           }
-          if (value && (value < 0 || !Number.isFinite(value))) {
+          if (
+            value &&
+            (Object.is(value, -0) || value < 0 || !Number.isFinite(value))
+          ) {
             return 'Cover charge must be a positive number'
           }
           if (value && !/^\d+(\.\d{1,2})?$/.test(value.toString())) {
@@ -335,7 +347,8 @@ export const eventType = defineType({
         ? `Ends: ${formatDate(eventEnds)}`
         : ''
 
-      const totalArtists = (headline?.length || 0) + (artists?.length || 0)
+      const totalArtists =
+        (headline ? 1 : 0) + (Array.isArray(artists) ? artists.length : 0)
       const artistText = totalArtists > 1 ? `(${totalArtists} artists)` : ''
 
       const subtitle = [

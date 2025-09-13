@@ -29,6 +29,7 @@ export const projectType = defineType({
       options: {
         source: 'title',
         maxLength: 96,
+        isUnique: (value, context) => context.defaultIsUnique(value, context),
       },
       validation: (Rule) => Rule.required().error('Slug is required'),
     }),
@@ -46,6 +47,14 @@ export const projectType = defineType({
       description: 'The date the project ended',
       type: 'date',
       group: 'details',
+      validation: (Rule) =>
+        Rule.custom((end, ctx) => {
+          const start = (ctx.document as {startDate?: string})?.startDate
+          if (end && start && new Date(end) < new Date(start)) {
+            return 'End date cannot be before start date'
+          }
+          return true
+        }),
     }),
     defineField({
       name: 'description',
@@ -72,6 +81,10 @@ export const projectType = defineType({
                     name: 'href',
                     type: 'url',
                     title: 'URL',
+                    validation: (Rule) =>
+                      Rule.uri({
+                        scheme: ['http', 'https', 'mailto', 'tel'],
+                      }).error('Please enter a valid URL'),
                   },
                 ],
               },
@@ -92,6 +105,17 @@ export const projectType = defineType({
           options: {
             hotspot: true,
           },
+          fields: [
+            defineField({
+              name: 'alt',
+              type: 'string',
+              title: 'Alternative Text',
+              description: 'A short description for SEO and accessibility',
+              validation: (Rule) =>
+                Rule.required().error('Alt text is required'),
+              hidden: ({parent}) => !parent?.asset,
+            }),
+          ],
         },
       ],
       validation: (Rule) =>

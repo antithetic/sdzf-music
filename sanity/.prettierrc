@@ -1,8 +1,7 @@
 {
-    "prettier": {
     "semi": false,
     "printWidth": 80,
     "bracketSpacing": false,
     "singleQuote": true
-  }
+
 }

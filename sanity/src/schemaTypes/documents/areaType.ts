@@ -8,13 +8,13 @@ export const areaType = defineType({
   icon: LandPlot,
   fields: [
     defineField({
-      name: 'Name',
+      name: 'name',
       title: 'Area Name',
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'Description',
+      name: 'description',
       title: 'Description',
       type: 'text',
       rows: 3,
@@ -36,7 +36,7 @@ export const areaType = defineType({
       title: 'Slug',
       type: 'slug',
       options: {
-        source: 'Name',
+        source: 'name',
         maxLength: 96,
       },
       validation: (Rule) => Rule.required(),
@@ -44,15 +44,14 @@ export const areaType = defineType({
   ],
   preview: {
     select: {
-      title: 'Name',
+      title: 'name',
       subtitle: 'location.name',
-      media: 'icon',
     },
-    prepare({title, subtitle, media}) {
+    prepare({title, subtitle}) {
       return {
         title,
         subtitle: subtitle ? `${subtitle}` : 'No location set',
-        media,
+        media: LandPlot,
       }
     },
   },
