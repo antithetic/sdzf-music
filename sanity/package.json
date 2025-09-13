@@ -1,13 +1,38 @@
 {
   "name": "@repo/sanity",
   "private": true,
+  "type": "module",
   "exports": {
     ".": "./src/index.ts"
   },
+  "scripts": {
+    "lint": "eslint . --fix",
+    "format": "prettier --write ."
+  },
   "dependencies": {
+    "@sanity/eslint-config-studio": "^5.0.2",
+    "@sanity/rich-date-input": "^3.0.6",
     "@sanity/vision": "^4.8.1",
+    "lucide-react": "^0.544.0",
     "sanity": "^4.8.1",
     "sanity-plugin-iconify": "^2.0.3",
-    "sanity-plugin-tags-v4": "^1.0.2"
+    "sanity-plugin-image-asset-picker": "^1.0.1",
+    "sanity-plugin-media": "^4.0.0",
+    "sanity-plugin-pt-string": "^0.0.7",
+    "sanity-plugin-singleton-tools": "^1.1.0",
+    "sanity-plugin-tags-v4": "^1.0.2",
+    "sanity-plugin-unique": "^1.0.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.35.0",
+    "@sanity/types": "^4.8.1",
+    "eslint": "^9.35.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "prettier": "^3.6.2",
+    "react": "^19.1.1",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.43.0"
   }
 }
