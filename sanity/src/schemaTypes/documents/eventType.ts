@@ -9,7 +9,7 @@ export const eventType = defineType({
   groups: [
     {name: 'editorial', title: 'Editorial', default: true},
     {name: 'details', title: 'Details'},
-    {name: 'metadata', title: 'Metadata'},
+    {name: 'venue', title: 'Venue'},
   ],
   fields: [
     defineField({
@@ -28,26 +28,24 @@ export const eventType = defineType({
     defineField({
       name: 'eventType',
       title: 'Event Type',
-      type: 'string',
+      type: 'array',
+      of: [{type: 'string'}],
       group: 'details',
       description: 'Specify the type of this event',
       options: {
         list: [
-          'artist talk',
-          'community',
-          'culture',
-          'exhibition',
-          'literature',
-          'mixed media',
-          'performance',
-          'pop-up',
-          'reading',
-          'sound',
-          'visual arts',
-          'workshop',
+          {title: 'Artist Talk', value: 'artist talk'},
+          {title: 'Community', value: 'community'},
+          {title: 'Culture', value: 'culture'},
+          {title: 'DJs', value: 'djs'},
+          {title: 'Literature', value: 'literature'},
+          {title: 'Music', value: 'music'},
+          {title: 'Performance', value: 'Performance'},
+          {title: 'Pop-Up', value: 'pop-up'},
+          {title: 'Workshop', value: 'workshop'},
           'other',
         ],
-        layout: 'radio',
+        layout: 'grid',
       },
       validation: (Rule) => Rule.required(),
     }),
@@ -208,13 +206,13 @@ export const eventType = defineType({
     }),
 
     defineField({
-      name: 'eventTags',
+      name: 'siteTag',
       title: 'Event Tags',
       description: 'Tags for the event',
       type: 'tags',
-      group: 'metadata',
+      group: 'venue',
       options: {
-        includeFromRelated: 'genreTags',
+        includeFromRelated: 'siteTag',
         allowCreate: true,
       },
     }),
@@ -222,7 +220,7 @@ export const eventType = defineType({
       name: 'slug',
       type: 'slug',
       description: 'How this event will be referenced on the website',
-      group: 'metadata',
+      group: 'venue',
       options: {source: 'name'},
       validation: (Rule) =>
         Rule.required().error('Required to generate a page on the website'),

@@ -17,7 +17,19 @@ export const areaType = defineType({
       name: 'Description',
       title: 'Description',
       type: 'text',
+      rows: 3,
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'location',
+      title: 'Location',
+      description: 'Venue or space where this area is located',
+      type: 'reference',
+      to: [
+        {
+          type: 'venue',
+        },
+      ],
     }),
     defineField({
       name: 'slug',
@@ -30,4 +42,18 @@ export const areaType = defineType({
       validation: (Rule) => Rule.required(),
     }),
   ],
+  preview: {
+    select: {
+      title: 'Name',
+      subtitle: 'location.name',
+      media: 'icon',
+    },
+    prepare({title, subtitle, media}) {
+      return {
+        title,
+        subtitle: subtitle ? `${subtitle}` : 'No location set',
+        media,
+      }
+    },
+  },
 })
